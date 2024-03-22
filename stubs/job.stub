@@ -1,0 +1,10 @@
+{{{
+  exports({ to: app.makePath('app/jobs/' + filename + '.ts') })
+}}}
+import { Job } from 'adonisjs-jobs'
+
+export default class {{ className }} extends Job {
+    async handle(payload : { a: string, b: string}) {
+        // handle job
+    }
+}

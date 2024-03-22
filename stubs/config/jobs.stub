@@ -1,0 +1,15 @@
+{{{ exports({ to: app.configPath('jobs.ts') }) }}}
+import env from '#start/env'
+import { defineConfig } from 'adonisjs-jobs'
+
+const jobsConfig = defineConfig({
+  connection: {
+    host: env.get('REDIS_HOST', 'localhost'),
+    port: env.get('REDIS_PORT', 6379),
+    password: env.get('REDIS_PASSWORD'),
+  },
+
+  queues: ['default'],
+})
+
+export default jobsConfig
