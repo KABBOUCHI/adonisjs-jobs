@@ -6,10 +6,11 @@
   "author": "Georges KABBOUCHI <georges.kabbouchi@gmail.com>",
 	"keywords": [
 		"adonisjs",
-		"scheduler",
-		"crons"
+		"jobs",
+		"queue",
+    "background"
 	],
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "node": ">=20.6.0"
   },
