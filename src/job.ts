@@ -2,7 +2,7 @@ import { Queue as BullmqQueue, Job as BullmqJob, JobsOptions } from 'bullmq'
 import { defineConfig } from './define_config.js'
 import type { ApplicationService, LoggerService } from '@adonisjs/core/types'
 
-type JobHandle<T> = T extends (payload: infer P) => any ? P : undefined
+type JobHandle<T> = T extends (payload: infer P) => any ? (undefined extends P ? any : P) : any
 
 export abstract class Job {
   declare job: BullmqJob
