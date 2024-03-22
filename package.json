@@ -2,13 +2,13 @@
   "name": "adonisjs-jobs",
   "description": "Job processing for AdonisJS",
   "homepage": "https://github.com/KABBOUCHI/adonisjs-jobs#readme",
-	"license": "MIT",
+  "license": "MIT",
   "author": "Georges KABBOUCHI <georges.kabbouchi@gmail.com>",
-	"keywords": [
-		"adonisjs",
-		"scheduler",
-		"crons"
-	],
+  "keywords": [
+    "adonisjs",
+    "scheduler",
+    "crons"
+  ],
   "version": "0.0.2",
   "engines": {
     "node": ">=20.6.0"
@@ -91,6 +91,8 @@
   "prettier": "@adonisjs/prettier-config",
   "dependencies": {
     "@poppinss/utils": "^6.7.2",
+    "@queuedash/api": "^2.0.5",
+    "@trpc/server": "^10.45.2",
     "bullmq": "^5.4.5"
   }
 }
