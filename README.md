@@ -45,7 +45,7 @@ await SendEmail.dispatch({ ... }, {
 })
 ```
 
-## Import Aliases
+## Import Aliases (optional)
 
 update your `package.json` and `tsconfig.json` to use import aliases
 
