@@ -38,21 +38,27 @@ Dispatching jobs is as simple as importing the job class and calling
 import SendEmail from 'path/to/jobs/send_email.js'
 
 await SendEmail.dispatch({ ... })
+
+await SendEmail.dispatch({ ... }, {
+  attempts: 3,
+  delay: 1000,
+})
 ```
 
 ## Import Aliases
 
+update your `package.json` and `tsconfig.json` to use import aliases
+
+`package.json`
 ```json
-/// package.json
 {
   "imports": {
     "#jobs/*": "./app/jobs/*.js"
   }
 }
 ```
-
+`tsconfig.json`
 ```json
-/// tsconfig.json
 {
   "compilerOptions": {
     "paths": {
