@@ -9,6 +9,8 @@ const jobsConfig = defineConfig({
     password: env.get('REDIS_PASSWORD'),
   },
 
+  queue: env.get('REDIS_QUEUE', 'default'),
+
   queues: ['default'],
 
   options: {

@@ -28,7 +28,7 @@ node ace jobs:make SendEmail
 
 First, you need to start the jobs listener, you can spawn multiple listeners to process jobs concurrently.
 ```sh
-node ace jobs:listen  # use all queues from the config file
+node ace jobs:listen  # default queue from env `REDIS_QUEUE`
 
 node ace jobs:listen --queue=high
 node ace jobs:listen --queue=high --queue=medium

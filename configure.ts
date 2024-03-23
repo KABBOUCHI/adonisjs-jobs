@@ -37,6 +37,7 @@ export async function configure(command: ConfigureCommand) {
       REDIS_HOST: `Env.schema.string()`,
       REDIS_PORT: `Env.schema.number()`,
       REDIS_PASSWORD: `Env.schema.string.optional()`,
+      REDIS_QUEUE: `Env.schema.string.optional()`,
     },
   })
 }
