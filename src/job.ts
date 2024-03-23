@@ -10,20 +10,25 @@ export abstract class Job {
   declare static app: ApplicationService
 
   static async dispatch<T extends Job>(
-    this: new (job: any) => T,
+    this: new () => T,
     payload: JobHandle<T['handle']>,
     options: JobsOptions & { queueName?: string } = {}
   ) {
-    //@ts-ignore
-    const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {})
+    // @ts-ignore
+    const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {}) as ReturnType<
+      typeof defineConfig
+    >
     const queueName = options.queueName || config.queues[0]
     const queue = new BullmqQueue(queueName, {
       connection: config.connection,
+      defaultJobOptions: config.options,
     })
 
-    await queue.add(this.name, payload, options)
+    const job = await queue.add(this.name, payload, options)
 
     await queue.close()
+
+    return job.id
   }
 
   abstract handle(payload: any): Promise<void> | void
