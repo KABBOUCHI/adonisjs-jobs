@@ -4,13 +4,15 @@
   "homepage": "https://github.com/KABBOUCHI/adonisjs-jobs#readme",
   "license": "MIT",
   "author": "Georges KABBOUCHI <georges.kabbouchi@gmail.com>",
-	"keywords": [
-		"adonisjs",
-		"jobs",
-		"queue",
-    "background"
-	],
-  "version": "0.0.7",
+  "keywords": [
+    "adonisjs",
+    "jobs",
+    "queue",
+    "background-jobs",
+    "redis",
+    "bullmq"
+  ],
+  "version": "0.0.8",
   "engines": {
     "node": ">=20.6.0"
   },

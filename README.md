@@ -1,7 +1,7 @@
 <div align="center">
   <h1><b>AdonisJS Jobs</b></h1>
 
-  <p>Queue/Jobs worker for AdonisJS v6</p>
+  <p>Job processing for AdonisJS v6</p>
 </div>
 
 ## Getting Started
