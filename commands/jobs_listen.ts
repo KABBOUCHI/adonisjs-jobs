@@ -1,4 +1,4 @@
-import { BaseCommand } from '@adonisjs/core/ace'
+import { BaseCommand, flags } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import { Worker } from 'bullmq'
 import { Job, defineConfig } from '../index.js'
@@ -12,21 +12,34 @@ export default class JobsListen extends BaseCommand {
     staysAlive: true,
   }
 
+  @flags.array({
+    description: 'The names of the queues to work',
+    parse(input) {
+      return input.flatMap((queue) =>
+        queue
+          .split(',')
+          .map((q) => q.trim())
+          .filter(Boolean)
+      )
+    },
+  })
+  declare queue: string[]
+
   async run() {
     const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {})
     const logger = await this.app.container.make('logger')
     const router = await this.app.container.make('router')
-    router.commit()
-
     const jobs = await this.app.container.make('scannedJobs')
-
+    const queues = this.queue || config.queues
     const workers: Worker[] = []
+
+    router.commit()
 
     this.app.terminating(async () => {
       await Promise.allSettled(workers.map((worker) => worker.close()))
     })
 
-    for (const queueName of config.queues) {
+    for (const queueName of queues) {
       const worker = new Worker(
         queueName,
         async (job) => {
@@ -62,5 +75,7 @@ export default class JobsListen extends BaseCommand {
 
       workers.push(worker)
     }
+
+    logger.info(`Processing jobs from the ${JSON.stringify(queues)} queues.`)
   }
 }
