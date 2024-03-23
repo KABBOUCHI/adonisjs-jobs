@@ -73,3 +73,29 @@ import SendEmail from '#jobs/send_email.js'
 
 await SendEmail.dispatch({ ... })
 ```
+
+
+## Jobs Dashboard (WIP)
+
+You can view the jobs dashboard by adding the following route to your `start/routes.ts` file.
+
+```ts
+import router from '@adonisjs/core/services/router'
+
+router.jobs()
+
+// or
+
+router.jobs('/my-jobs-dashboard')
+```
+
+`router.jobs()` returns a route group, you can add middleware to the group
+
+```ts
+router.jobs().use(
+  middleware.auth({
+    guards: ['basicAuth'],
+  })
+)
+
+```
