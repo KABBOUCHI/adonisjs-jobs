@@ -3,8 +3,10 @@
 }}}
 import { Job } from 'adonisjs-jobs'
 
+type {{ className }}Payload = {}
+
 export default class {{ className }} extends Job {
-    async handle(payload : { a: string, b: string}) {
+    async handle(payload: {{ className }}Payload) {
         this.logger.info('{{ className }} job handled')
     }
 }
