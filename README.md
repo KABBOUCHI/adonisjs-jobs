@@ -33,6 +33,8 @@ node ace jobs:listen  # default queue from env `REDIS_QUEUE`
 node ace jobs:listen --queue=high
 node ace jobs:listen --queue=high --queue=medium
 node ace jobs:listen --queue=high,medium,low
+
+node ace jobs:listen --queue=high --concurrency=3
 ```
 
 ## Dispatching Jobs

@@ -25,6 +25,12 @@ export default class JobsListen extends BaseCommand {
   })
   declare queue: string[]
 
+  @flags.number({
+    description: 'Amount of jobs that a single worker is allowed to work on in parallel.',
+    default: 1,
+  })
+  declare concurrency: number
+
   async run() {
     const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {})
     const logger = await this.app.container.make('logger')
@@ -66,6 +72,7 @@ export default class JobsListen extends BaseCommand {
         },
         {
           connection: config.connection,
+          concurrency: this.concurrency,
         }
       )
 
