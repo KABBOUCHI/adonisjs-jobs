@@ -82,7 +82,7 @@ You can view the jobs dashboard by adding the following route to your `start/rou
 ```ts
 import router from '@adonisjs/core/services/router'
 
-router.jobs()
+router.jobs() // default is /jobs
 
 // or
 
