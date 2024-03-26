@@ -35,7 +35,7 @@ export default class JobsListen extends BaseCommand {
     const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {})
     const logger = await this.app.container.make('logger')
     const router = await this.app.container.make('router')
-    const jobs = await this.app.container.make('scannedJobs')
+    const jobs = await this.app.container.make('jobs.list')
     const queues = this.queue || [config.queue]
     const workers: Worker[] = []
 

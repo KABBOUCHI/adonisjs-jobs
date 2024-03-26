@@ -5,12 +5,12 @@ import { basename, extname, relative } from 'node:path'
 import { Job, defineConfig } from '../index.js'
 import { RouteGroup } from '@adonisjs/core/http'
 import { resolveHTTPResponse } from '@trpc/server/http'
-import { appRouter } from '@queuedash/api'
+import { Context, appRouter } from '@queuedash/api'
 import { Queue as BullmqQueue } from 'bullmq'
 
 const JS_MODULES = ['.js', '.cjs', '.mjs']
 
-export default class SchedulerProvider {
+export default class JobsProvider {
   constructor(protected app: ApplicationService) {}
 
   async boot() {
@@ -51,28 +51,35 @@ export default class SchedulerProvider {
       jobs[jobClass.name] = jobClass
     }
 
-    this.app.container.singleton('scannedJobs', () => jobs)
-
     const router = await this.app.container.make('router')
     const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {})
+
+    const queues = config.queues.reduce(
+      (acc, name) => {
+        const queue = new BullmqQueue(name, {
+          connection: config.connection,
+          defaultJobOptions: config.options,
+        })
+
+        acc[name] = queue
+
+        return acc
+      },
+      {} as Record<string, BullmqQueue>
+    )
+
+    this.app.terminating(async () => {
+      for (const queueName in queues) {
+        await queues[queueName].close()
+      }
+    })
+
+    this.app.container.singleton('jobs.list', () => jobs)
+    this.app.container.singleton('jobs.queues', () => queues)
 
     router.jobs = (baseUrl: string = '/jobs') => {
       baseUrl = baseUrl.startsWith('/') ? baseUrl : '/' + baseUrl
       baseUrl = baseUrl.replace(/\/$/, '')
-
-      const queues = config.queues.map((queueName) => ({
-        queue: new BullmqQueue(queueName, {
-          connection: config.connection,
-        }),
-        displayName: queueName,
-        type: 'bullmq' as const,
-      }))
-
-      this.app.terminating(() => {
-        queues.forEach(({ queue }) => {
-          queue.close()
-        })
-      })
 
       return router.group(() => {
         router.get(baseUrl, async ({ response }) => {
@@ -111,7 +118,18 @@ export default class SchedulerProvider {
 
           const { body, status, headers } = await resolveHTTPResponse({
             createContext: async () => ({
-              queues,
+              queues: Object.keys(queues).reduce(
+                (acc, displayName) => {
+                  acc.push({
+                    queue: queues[displayName],
+                    displayName,
+                    type: 'bullmq' as const,
+                  })
+
+                  return acc
+                },
+                [] as Context['queues']
+              ),
             }),
             router: appRouter,
             path,
@@ -173,6 +191,7 @@ declare module '@adonisjs/core/http' {
 
 declare module '@adonisjs/core/types' {
   export interface ContainerBindings {
-    scannedJobs: Record<string, typeof Job>
+    'jobs.list': Record<string, typeof Job>
+    'jobs.queues': Record<string, BullmqQueue>
   }
 }

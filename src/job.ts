@@ -18,15 +18,16 @@ export abstract class Job {
     const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {}) as ReturnType<
       typeof defineConfig
     >
+    // @ts-ignore
+    const queues = await this.app.container.make('jobs.queues')
     const queueName = options.queueName || config.queues[0]
-    const queue = new BullmqQueue(queueName, {
-      connection: config.connection,
-      defaultJobOptions: config.options,
-    })
+    const queue = queues[queueName] as BullmqQueue
+
+    if (!queue) {
+      throw new Error(`Queue ${queueName} not found`)
+    }
 
     const job = await queue.add(this.name, payload, options)
-
-    await queue.close()
 
     return job.id
   }
