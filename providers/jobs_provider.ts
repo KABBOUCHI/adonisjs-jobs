@@ -68,6 +68,12 @@ export default class SchedulerProvider {
         type: 'bullmq' as const,
       }))
 
+      this.app.terminating(() => {
+        queues.forEach(({ queue }) => {
+          queue.close()
+        })
+      })
+
       return router.group(() => {
         router.get(baseUrl, async ({ response }) => {
           response.header('Content-Type', 'text/html')
