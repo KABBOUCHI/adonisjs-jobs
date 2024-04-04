@@ -1,7 +1,7 @@
 <div align="center">
   <h1><b>AdonisJS Jobs</b></h1>
 
-  <p>Job processing for AdonisJS v6</p>
+  <p>Job processing for AdonisJS v6 using [BullMQ](https://bullmq.io/)</p>
 </div>
 
 ## Getting Started
@@ -45,7 +45,7 @@ import SendEmail from 'path/to/jobs/send_email.js'
 
 await SendEmail.dispatch({ ... })
 
-await SendEmail.dispatch({ ... }, {
+await SendEmail.dispatch({ ... }, { // for more job options check https://docs.bullmq.io/
   attempts: 3,
   delay: 1000,
 })
