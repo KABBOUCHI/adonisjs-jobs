@@ -81,7 +81,7 @@ await SendEmail.dispatch({ ... })
 ```
 
 
-## Jobs Dashboard (WIP)
+## Jobs Dashboard
 
 You can view the jobs dashboard by adding the following route to your `start/routes.ts` file.
 
