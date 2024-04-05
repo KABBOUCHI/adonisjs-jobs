@@ -90,7 +90,7 @@
   "prettier": "@adonisjs/prettier-config",
   "dependencies": {
     "@poppinss/utils": "^6.7.2",
-    "@queuedash/api": "npm:queuedash-api-bullmq-v5",
+    "@queuedash/api": "^2.1.0",
     "@trpc/server": "^10.45.2",
     "bullmq": "^5.4.5"
   }
