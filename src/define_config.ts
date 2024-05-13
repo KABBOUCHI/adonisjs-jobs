@@ -5,7 +5,7 @@ type Config = {
   queue: string
   queues: string[]
   options: JobsOptions
-  workerOptions?: WorkerOptions
+  workerOptions?: Omit<WorkerOptions, 'connection' | 'concurrency'>
 }
 
 export function defineConfig(config: Config) {
