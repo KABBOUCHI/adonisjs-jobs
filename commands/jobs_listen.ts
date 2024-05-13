@@ -71,6 +71,7 @@ export default class JobsListen extends BaseCommand {
           logger.info(`Job ${job.name} finished`)
         },
         {
+          ...(config.workerOptions || {}),
           connection: config.connection,
           concurrency: this.concurrency,
         }
