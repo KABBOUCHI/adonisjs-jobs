@@ -7,6 +7,8 @@ import { RouteGroup } from '@adonisjs/core/http'
 import { resolveHTTPResponse } from '@trpc/server/http'
 import { Context, appRouter } from '@queuedash/api'
 import { Queue as BullmqQueue } from 'bullmq'
+import { Dispatcher } from '../src/dispatcher.js'
+import ClosureJob from '../src/jobs/closure_job.js'
 
 const JS_MODULES = ['.js', '.cjs', '.mjs']
 
@@ -14,7 +16,9 @@ export default class JobsProvider {
   constructor(protected app: ApplicationService) {}
 
   async boot() {
-    const jobs: Record<string, typeof Job> = {}
+    const jobs: Record<string, typeof Job> = {
+      ClosureJob,
+    }
     const jobsFiles = await fsReadAll(this.app.relativePath('app/jobs'), {
       pathType: 'url',
       ignoreMissingRoot: true,
@@ -76,6 +80,7 @@ export default class JobsProvider {
 
     this.app.container.singleton('jobs.list', () => jobs)
     this.app.container.singleton('jobs.queues', () => queues)
+    this.app.container.singleton('jobs.dispatcher', () => new Dispatcher(this.app))
 
     router.jobs = (baseUrl: string = '/jobs') => {
       baseUrl = baseUrl.startsWith('/') ? baseUrl : '/' + baseUrl
@@ -193,5 +198,6 @@ declare module '@adonisjs/core/types' {
   export interface ContainerBindings {
     'jobs.list': Record<string, typeof Job>
     'jobs.queues': Record<string, BullmqQueue>
+    'jobs.dispatcher': Dispatcher
   }
 }

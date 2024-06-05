@@ -1,7 +1,7 @@
 import { BaseCommand, flags } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import { Worker } from 'bullmq'
-import { Job, defineConfig } from '../index.js'
+import type { Job, defineConfig } from '../index.js'
 
 export default class JobsListen extends BaseCommand {
   static commandName = 'jobs:listen'

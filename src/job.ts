@@ -1,5 +1,4 @@
-import { Queue as BullmqQueue, Job as BullmqJob, JobsOptions } from 'bullmq'
-import { defineConfig } from './define_config.js'
+import { Job as BullmqJob, JobsOptions } from 'bullmq'
 import type { ApplicationService, LoggerService } from '@adonisjs/core/types'
 
 type JobHandle<T> = T extends (payload: infer P) => any ? (undefined extends P ? any : P) : any
@@ -14,22 +13,9 @@ export abstract class Job {
     payload: JobHandle<T['handle']>,
     options: JobsOptions & { queueName?: string } = {}
   ) {
-    // @ts-ignore
-    const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {}) as ReturnType<
-      typeof defineConfig
-    >
-    // @ts-ignore
-    const queues = await this.app.container.make('jobs.queues')
-    const queueName = options.queueName || config.queues[0]
-    const queue = queues[queueName] as BullmqQueue
+    const { dispatch } = await import('../services/main.js')
 
-    if (!queue) {
-      throw new Error(`Queue ${queueName} not found`)
-    }
-
-    const job = await queue.add(this.name, payload, options)
-
-    return job.id
+    return await dispatch(this, payload, options)
   }
 
   abstract handle(payload: any): Promise<void> | void

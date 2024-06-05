@@ -19,7 +19,9 @@ node ace configure adonisjs-jobs
 ```
 
 ## Creating Jobs
+
 You can create a new job by running the following command.
+
 ```sh
 node ace jobs:make SendEmail
 ```
@@ -27,6 +29,7 @@ node ace jobs:make SendEmail
 ## Listening for Jobs
 
 First, you need to start the jobs listener, you can spawn multiple listeners to process jobs concurrently.
+
 ```sh
 node ace jobs:listen  # default queue from env `REDIS_QUEUE`
 
@@ -40,6 +43,7 @@ node ace jobs:listen --queue=high --concurrency=3
 ## Dispatching Jobs
 
 Dispatching jobs is as simple as importing the job class and calling
+
 ```ts
 import SendEmail from 'path/to/jobs/send_email.js'
 
@@ -56,6 +60,7 @@ await SendEmail.dispatch({ ... }, { // for more job options check https://docs.b
 update your `package.json` and `tsconfig.json` to use import aliases
 
 `package.json`
+
 ```json
 {
   "imports": {
@@ -63,7 +68,9 @@ update your `package.json` and `tsconfig.json` to use import aliases
   }
 }
 ```
+
 `tsconfig.json`
+
 ```json
 {
   "compilerOptions": {
@@ -79,7 +86,6 @@ import SendEmail from '#jobs/send_email.js'
 
 await SendEmail.dispatch({ ... })
 ```
-
 
 ## Jobs Dashboard
 
@@ -103,5 +109,18 @@ router.jobs().use(
     guards: ['basicAuth'],
   })
 )
+```
 
+## Experimental Features
+
+### Dispatch Closure
+
+```ts
+import { dispatch } from 'adonisjs-jobs/services/main'
+
+await dispatch(async () => {
+  const { default: User } = await import('#models/user')
+
+  console.log(await User.query().count('*'))
+})
 ```
