@@ -18,5 +18,14 @@ export abstract class Job {
     return await dispatch(this, payload, options)
   }
 
+  static async dispatchSync<T extends Job>(this: new () => T, payload: JobHandle<T['handle']>) {
+    const logger = await Job.app.container.make('logger')
+    const instance: Job = await Job.app.container.make(this)
+
+    instance.logger = logger
+
+    await instance.handle(payload)
+  }
+
   abstract handle(payload: any): Promise<void> | void
 }
