@@ -19,8 +19,10 @@ export abstract class Job {
   }
 
   static async dispatchSync<T extends Job>(this: new () => T, payload: JobHandle<T['handle']>) {
-    const logger = await Job.app.container.make('logger')
-    const instance: Job = await Job.app.container.make(this)
+    const { default: app } = await import('@adonisjs/core/services/app')
+
+    const logger = await app.container.make('logger')
+    const instance: Job = await app.container.make(this)
 
     instance.logger = logger
 
