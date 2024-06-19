@@ -123,4 +123,16 @@ await dispatch(async () => {
 
   console.log(await User.query().count('*'))
 })
+
+await dispatch(async () => {
+  const { default: mail } = await import('@adonisjs/mail/services/main')
+
+  await mail.send((message) => {
+    message
+      .to('doe@example.org')
+      .from('info@example.org')
+      .subject('Verify your email address')
+      .htmlView('emails/verify_email')
+  })
+})
 ```
