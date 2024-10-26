@@ -111,6 +111,22 @@ router.jobs().use(
 )
 ```
 
+## Tips
+
+### Job Completion on Kubernetes
+
+In Kubernetes, prevent job termination by adjusting `terminationGracePeriodSeconds` (default is 30s) to allow jobs to finish gracefully.
+
+```yaml
+spec:
+  containers:
+    - name: listen-jobs
+      image: <IMAGE>
+      command: ['node']
+      args: ['ace', 'jobs:listen']
+terminationGracePeriodSeconds: 1800
+```
+
 ## Experimental Features
 
 ### Dispatch Closure
