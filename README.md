@@ -152,3 +152,23 @@ await dispatch(async () => {
   })
 })
 ```
+
+## Alternative Ways to Run the Job Worker
+
+Besides using `node ace jobs:listen`, you can also manually initialize and control the job worker in your code:
+
+```ts
+import { Worker } from 'adonisjs-jobs'
+import app from '@adonisjs/core/services/app'
+
+const worker = new Worker(app, {
+  queues: ['default', 'mail'],
+  concurrency: 1,
+})
+
+app.terminating(async () => {
+  await worker.stop()
+})
+
+await worker.start()
+```
