@@ -19,13 +19,10 @@ export class Worker {
   async start() {
     const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {})
     const logger = await this.app.container.make('logger')
-    const router = await this.app.container.make('router')
     const jobs = await this.app.container.make('jobs.list')
     const queues =
       this.config.queues && this.config.queues.length ? this.config.queues : [config.queue]
     const workers: BullWorker[] = []
-
-    router.commit()
 
     this.app.terminating(async () => {
       await Promise.allSettled(workers.map((worker) => worker.close()))

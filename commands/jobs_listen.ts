@@ -31,6 +31,9 @@ export default class JobsListen extends BaseCommand {
   declare concurrency: number
 
   async run() {
+    const router = await this.app.container.make('router')
+    router.commit()
+
     const worker = new Worker(this.app, {
       queues: this.queue,
       concurrency: this.concurrency,
