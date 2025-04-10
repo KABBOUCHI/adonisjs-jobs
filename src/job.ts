@@ -29,9 +29,9 @@ export abstract class Job {
     await instance.handle(payload)
   }
 
-  abstract handle(payload: any): Promise<void> | void
+  abstract handle(payload: any): Promise<any> | any
 
   failed?(error: Error): Promise<void> | void
 
-  completed?(): Promise<void> | void
+  completed?(payload: any, result: any): Promise<void> | void
 }

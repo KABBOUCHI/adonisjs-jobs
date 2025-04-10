@@ -50,8 +50,9 @@ export class Worker {
           instance.logger = logger
 
           logger.info(`Job ${job.name} started`)
-          await instance.handle(job.data)
+          let result = await instance.handle(job.data)
           logger.info(`Job ${job.name} finished`)
+          return result
         },
         {
           ...(config.workerOptions || {}),
@@ -86,7 +87,7 @@ export class Worker {
         }
       })
 
-      worker.on('completed', async (job) => {
+      worker.on('completed', async (job, result) => {
         if (!job) return
 
         const jobClass = jobs[job.name]
@@ -107,7 +108,7 @@ export class Worker {
         instance.job = job
         instance.logger = logger
 
-        await instance.completed?.()
+        await instance.completed?.(job.data, result)
       })
 
       this.workers.push(worker)
