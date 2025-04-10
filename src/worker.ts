@@ -60,8 +60,30 @@ export class Worker {
         }
       )
 
-      worker.on('failed', (_job, error) => {
+      worker.on('failed', async (job, error) => {
         logger.error(error.message, [])
+
+        if (job && (job.attemptsMade === job.opts.attempts || job.finishedOn)) {
+          const jobClass = jobs[job.name]
+
+          if (!jobClass) {
+            logger.error(`Cannot find job ${job.name}`)
+          }
+
+          let instance: Job
+
+          try {
+            instance = await this.app.container.make(jobClass)
+          } catch {
+            logger.error(`Cannot instantiate job ${job.name}`)
+            return
+          }
+
+          instance.job = job
+          instance.logger = logger
+
+          await instance.failed?.(error)
+        }
       })
 
       this.workers.push(worker)

@@ -30,4 +30,6 @@ export abstract class Job {
   }
 
   abstract handle(payload: any): Promise<void> | void
+
+  failed?(error: Error): Promise<void> | void
 }
