@@ -3,6 +3,7 @@ import { Worker as BullWorker } from 'bullmq'
 import { defineConfig } from './define_config.js'
 import type { Job } from './job.js'
 import * as devalue from 'devalue'
+import { REVIVERS } from './devalue.js'
 
 export interface WorkerOptions {
   queues?: string[]
@@ -24,6 +25,10 @@ export class Worker {
     const queues =
       this.config.queues && this.config.queues.length ? this.config.queues : [config.queue]
     const workers: BullWorker[] = []
+    const revivers = {
+      ...REVIVERS,
+      ...(config.serialization?.revivers || {}),
+    }
 
     this.app.terminating(async () => {
       await Promise.allSettled(workers.map((worker) => worker.close()))
@@ -50,7 +55,7 @@ export class Worker {
           instance.job = job
           instance.logger = logger
 
-          let payload = devalue.parse(job.data)
+          let payload = devalue.parse(job.data, revivers)
           logger.info(
             { id: job.id, options: job.opts, payload },
             `Job ${job.name} (${job.id}) started`

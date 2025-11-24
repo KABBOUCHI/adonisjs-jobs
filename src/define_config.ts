@@ -6,6 +6,11 @@ type Config = {
   queues: string[]
   options: JobsOptions
   workerOptions?: Omit<WorkerOptions, 'connection' | 'concurrency'>
+
+  serialization?: {
+    reducers?: Record<string, (value: any) => any>
+    revivers?: Record<string, (value: any) => any>
+  }
 }
 
 export function defineConfig(config: Config) {

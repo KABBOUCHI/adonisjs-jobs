@@ -4,6 +4,7 @@ import { Queue as BullmqQueue, JobsOptions } from 'bullmq'
 import { Job } from './job.js'
 import { type defineConfig } from './define_config.js'
 import * as devalue from 'devalue'
+import { REDUCERS } from './devalue.js'
 
 export class Dispatcher {
   constructor(private app: ApplicationService) {}
@@ -36,7 +37,12 @@ export class Dispatcher {
       throw new Error(`Queue ${queueName} not found`)
     }
 
-    const bullmqJob = await queue.add(job.name, devalue.stringify(payload), options)
+    const reducers = {
+      ...REDUCERS,
+      ...(config.serialization?.reducers || {}),
+    }
+
+    const bullmqJob = await queue.add(job.name, devalue.stringify(payload, reducers), options)
 
     return bullmqJob.id
   }
