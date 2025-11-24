@@ -3,6 +3,7 @@ import ClosureJob from './jobs/closure_job.js'
 import { Queue as BullmqQueue, JobsOptions } from 'bullmq'
 import { Job } from './job.js'
 import { type defineConfig } from './define_config.js'
+import * as devalue from 'devalue'
 
 export class Dispatcher {
   constructor(private app: ApplicationService) {}
@@ -35,7 +36,7 @@ export class Dispatcher {
       throw new Error(`Queue ${queueName} not found`)
     }
 
-    const bullmqJob = await queue.add(job.name, payload, options)
+    const bullmqJob = await queue.add(job.name, devalue.stringify(payload), options)
 
     return bullmqJob.id
   }

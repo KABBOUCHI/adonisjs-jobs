@@ -2,6 +2,7 @@ import type { ApplicationService } from '@adonisjs/core/types'
 import { Worker as BullWorker } from 'bullmq'
 import { defineConfig } from './define_config.js'
 import type { Job } from './job.js'
+import * as devalue from 'devalue'
 
 export interface WorkerOptions {
   queues?: string[]
@@ -49,9 +50,16 @@ export class Worker {
           instance.job = job
           instance.logger = logger
 
-          logger.info(`Job ${job.name} started`)
-          let result = await instance.handle(job.data)
-          logger.info(`Job ${job.name} finished`)
+          let payload = devalue.parse(job.data)
+          logger.info(
+            { id: job.id, options: job.opts, payload },
+            `Job ${job.name} (${job.id}) started`
+          )
+          let result = await instance.handle(payload)
+          logger.info(
+            { id: job.id, options: job.opts, payload },
+            `Job ${job.name} (${job.id}) finished`
+          )
           return result
         },
         {
