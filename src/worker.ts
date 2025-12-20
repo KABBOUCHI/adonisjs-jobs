@@ -22,8 +22,17 @@ export class Worker {
     const config = this.app.config.get<ReturnType<typeof defineConfig>>('jobs', {})
     const logger = await this.app.container.make('logger')
     const jobs = await this.app.container.make('jobs.list')
-    const queues =
-      this.config.queues && this.config.queues.length ? this.config.queues : [config.queue]
+
+    let queues: string[]
+
+    if (this.config.queues && this.config.queues.length > 0) {
+      queues = this.config.queues
+    } else if (config.queues && config.queues.length > 0) {
+      queues = config.queues
+    } else {
+      queues = [config.queue]
+    }
+
     const workers: BullWorker[] = []
     const revivers = {
       ...REVIVERS,
