@@ -23,7 +23,7 @@ export class Worker {
     const logger = await this.app.container.make('logger')
     const jobs = await this.app.container.make('jobs.list')
     const queues =
-      this.config.queues && this.config.queues.length ? this.config.queues : [config.queue]
+      this.config.queues && this.config.queues.length ? this.config.queues : config.queue.split(',')
     const workers: BullWorker[] = []
     const revivers = {
       ...REVIVERS,
