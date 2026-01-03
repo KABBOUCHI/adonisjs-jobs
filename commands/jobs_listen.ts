@@ -13,6 +13,7 @@ export default class JobsListen extends BaseCommand {
 
   @flags.array({
     description: 'The names of the queues to work',
+    alias: 'q',
     parse(input) {
       return input.flatMap((queue) =>
         queue
@@ -24,11 +25,22 @@ export default class JobsListen extends BaseCommand {
   })
   declare queue: string[]
 
-  @flags.number({
+  @flags.array({
     description: 'Amount of jobs that a single worker is allowed to work on in parallel.',
-    default: 1,
+    alias: 'c',
+    parse(input) {
+      return input.flatMap((c) =>
+        String(c)
+          .split(',')
+          .map((q) => q.trim())
+          .filter(Boolean)
+          .map((v) => Number.parseInt(v))
+          .filter((v) => !Number.isNaN(v))
+      )
+    },
+    default: [1],
   })
-  declare concurrency: number
+  declare concurrency: number[]
 
   async run() {
     const router = await this.app.container.make('router')

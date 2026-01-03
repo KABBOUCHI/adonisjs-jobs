@@ -7,7 +7,7 @@ import { REVIVERS } from './devalue.js'
 
 export interface WorkerOptions {
   queues?: string[]
-  concurrency?: number
+  concurrency?: number | number[]
 }
 
 export class Worker {
@@ -34,7 +34,11 @@ export class Worker {
       await Promise.allSettled(workers.map((worker) => worker.close()))
     })
 
-    for (const queueName of queues) {
+    for (const [index, queueName] of queues.entries()) {
+      let concurrency = Array.isArray(this.config.concurrency)
+        ? (this.config.concurrency[index] ?? this.config.concurrency[0] ?? 1)
+        : (this.config.concurrency ?? 1)
+
       const worker = new BullWorker(
         queueName,
         async (job) => {
@@ -70,7 +74,7 @@ export class Worker {
         {
           ...(config.workerOptions || {}),
           connection: config.connection,
-          concurrency: this.config.concurrency,
+          concurrency,
         }
       )
 
