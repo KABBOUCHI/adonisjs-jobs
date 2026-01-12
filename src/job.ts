@@ -6,6 +6,7 @@ type JobHandle<T> = T extends (payload: infer P) => any ? (undefined extends P ?
 export abstract class Job {
   declare job: BullmqJob
   declare logger: LoggerService
+  declare payload: JobHandle<this['handle']>
   declare static app: ApplicationService
 
   static async dispatch<T extends Job>(

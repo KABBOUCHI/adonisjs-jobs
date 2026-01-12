@@ -58,15 +58,15 @@ export class Worker {
 
           instance.job = job
           instance.logger = logger
+          instance.payload = devalue.parse(job.data, revivers)
 
-          let payload = devalue.parse(job.data, revivers)
           logger.info(
-            { id: job.id, options: job.opts, payload },
+            { id: job.id, options: job.opts, payload: instance.payload },
             `Job ${job.name} (${job.id}) started`
           )
-          let result = await instance.handle(payload)
+          let result = await instance.handle(instance.payload)
           logger.info(
-            { id: job.id, options: job.opts, payload },
+            { id: job.id, options: job.opts, payload: instance.payload },
             `Job ${job.name} (${job.id}) finished`
           )
           return result
@@ -99,6 +99,7 @@ export class Worker {
 
           instance.job = job
           instance.logger = logger
+          instance.payload = devalue.parse(job.data, revivers)
 
           await instance.failed?.(error)
         }
@@ -124,8 +125,9 @@ export class Worker {
 
         instance.job = job
         instance.logger = logger
+        instance.payload = devalue.parse(job.data, revivers)
 
-        await instance.completed?.(job.data, result)
+        await instance.completed?.(instance.payload, result)
       })
 
       this.workers.push(worker)
