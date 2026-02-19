@@ -10,7 +10,7 @@ export abstract class Job {
   declare static app: ApplicationService
 
   static async dispatch<T extends Job>(
-    this: new () => T,
+    this: new (...args: any[]) => T,
     payload: JobHandle<T['handle']>,
     options: JobsOptions & { queueName?: string } = {}
   ) {
@@ -19,7 +19,10 @@ export abstract class Job {
     return await dispatch(this, payload, options)
   }
 
-  static async dispatchSync<T extends Job>(this: new () => T, payload: JobHandle<T['handle']>) {
+  static async dispatchSync<T extends Job>(
+    this: new (...args: any[]) => T,
+    payload: JobHandle<T['handle']>
+  ) {
     const { default: app } = await import('@adonisjs/core/services/app')
 
     const logger = await app.container.make('logger')
